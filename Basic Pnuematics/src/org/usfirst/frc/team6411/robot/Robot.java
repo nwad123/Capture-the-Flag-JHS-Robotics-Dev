@@ -2,6 +2,8 @@ package org.usfirst.frc.team6411.robot;
 
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -14,7 +16,11 @@ public class Robot extends SampleRobot {
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
 	SendableChooser<String> chooser = new SendableChooser<>();
-
+	
+	/*****Pneumatics*************************************************************/
+	Compressor booster = new Compressor(0);
+	DoubleSolenoid magicAir = new DoubleSolenoid(2,3);
+	
 	public Robot() {
 		DriveTrain.setExpiration(0.1);
 	}
@@ -24,19 +30,10 @@ public class Robot extends SampleRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto modes", chooser);
+		
+		booster.setClosedLoopControl(true);
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * if-else structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
 	public void disabledInit(){
 
     }
@@ -46,13 +43,10 @@ public class Robot extends SampleRobot {
     }
 
     public void autonomousInit() {
-        // schedule the autonomous command (example)
+       
         
     }
 
-    /**
-     * This function is called periodically during autonomous
-     */
     public void autonomousPeriodic() {
         
     }
@@ -61,18 +55,21 @@ public class Robot extends SampleRobot {
        
     }
 
-    /**
-     * This function is called periodically during operator control
-     */
     public void teleopPeriodic() {
        
     	DriveTrain.arcadeDrive(controller);
     	
+    	booster.setClosedLoopControl(true);
+    	
+    	if(controller.getRawButton(1) == true) {
+    		magicAir.set(DoubleSolenoid.Value.kForward);
+    	}
+    	else {
+    		magicAir.set(DoubleSolenoid.Value.kReverse);
+    	}
+    	
     }
 
-    /**
-     * This function is called periodically during test mode
-     */
     public void testPeriodic() {
         
     }
