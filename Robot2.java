@@ -19,9 +19,8 @@ public class Robot extends SampleRobot {
 	SendableChooser<String> chooser = new SendableChooser<>();
 	Compressor compressor1 = new Compressor(0);
 	boolean compressorBoolean = false;
-	DoubleSolenoid Shooter = new DoubleSolenoid(1,2);
-	
-
+	DoubleSolenoid shooter = new DoubleSolenoid(1,2);
+	Servo flagGrabber = new Servo(5);  //
 	
 
 	public Robot() {
@@ -68,28 +67,41 @@ public class Robot extends SampleRobot {
 	public void operatorControl() {
 		myRobot.setSafetyEnabled(true);
 		while (isOperatorControl() && isEnabled()) {
-			myRobot.tankDrive(controller1, controller2); // drive with arcade style (use right
-										// stick)
+			
+			myRobot.tankDrive(controller1, controller2); //moved the robot with tank control, left side of robot is moved with controller while right is moved with the controller2
 			
 			Timer.delay(0.005); // wait for a motor update time
 			
-			compressor1.setClosedLoopControl(true); //always sets it to true
+			compressor1.setClosedLoopControl(true); //turns on the compressor to compress shots, automatically stops
 			
-			if(controller1.getRawButton(2) == false)
-			{
-				Shooter.set(DoubleSolenoid.Value.kOff);
-			}
-			else
-			{
-				Shooter.set(DoubleSolenoid.Value.kForward);
-			}
+		
+		
 			
+			if(controller1.getRawButton(2) == true)   //checks to see if button 2 is pressed, if it is the robograbber should go retract
+			{
+				flagGrabber.setAngle(0);   //fully extend the robo arm
+			}
+			if(controller1.getRawButton(3) == true)   //checks to see if the button 3 is pressed, if it is the robograbber should fully extend
+			{ 
+				flagGrabber.setAngle(170);   //fully extends the robo arm
+			}
+				
 		}
+		
+		
+		
+		if(controller1.getRawButton(4) == true)
+		{
+			shooter.set(DoubleSolenoid.Value.kForward);
+		}
+		else
+		{
+			shooter.set(DoubleSolenoid.Value.kReverse);
+		}
+		
+	
 	}
 
-	
-	
-	
 	 // Runs during test mode
 	 
 	@Override
